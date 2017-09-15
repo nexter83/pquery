@@ -1,0 +1,10 @@
+(login as text, password as text) as text=> 
+
+let
+   Source = Json.Document(Web.Contents("http://api.comagic.ru/api/login/?login="&login&"&password="&password)),
+    data = Source[data],
+    session_key = data[session_key]
+    
+    
+in
+    session_key
