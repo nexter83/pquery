@@ -3,9 +3,6 @@ let
    
     session_key = getSession_key(login,password),
 
-    date_from = "2017-08-01",
-    date_till = Date.ToText(Date.AddDays(DateTime.Date(DateTime.LocalNow()),-1),"yyyy-MM-dd"),
-
     getTag = Json.Document(
                     Web.Contents(
                         "http://api.comagic.ru/api/v1/",
