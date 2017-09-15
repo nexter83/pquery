@@ -1,10 +1,26 @@
-(login as text, password as text) as text=> 
+( login as text, password as text ) => 
 
 let
-   Source = Json.Document(Web.Contents("http://api.comagic.ru/api/login/?login="&login&"&password="&password)),
-    data = Source[data],
-    session_key = data[session_key]
-    
+  
+
+    getSession_key = Json.Document(
+                    Web.Contents(
+                        "http://api.comagic.ru/api/login/",
+                        [
+                            RelativePath="",
+                            Query=
+                                [
+                                    login=login,
+                                    password=password
+                                    ]
+                        ]
+                                )
+                            ),
+
+
+
+data1 = getSession_key[data],
+session_key = data1[session_key]
     
 in
     session_key
