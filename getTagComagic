@@ -1,0 +1,32 @@
+( customer_id as text, login as text, password as text ) => 
+let
+   
+    session_key = getSession_key(login,password),
+
+    date_from = "2017-08-01",
+    date_till = Date.ToText(Date.AddDays(DateTime.Date(DateTime.LocalNow()),-1),"yyyy-MM-dd"),
+
+    getTag = Json.Document(
+                    Web.Contents(
+                        "http://api.comagic.ru/api/v1/",
+                        [
+                            RelativePath="tag/",
+                            Query=
+                                [
+                                    session_key=session_key,
+                                    customer_id=customer_id
+                                    ]
+                        ]
+                                )
+                            ),
+
+
+
+    data1 = getTag[data],
+
+#"Converted to Table1" = Table.FromList(data1, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table1", "Column1", {"id", "name"}, {"id", "name"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded Column1",{{"name", "tagName"}})
+    
+in
+    #"Renamed Columns"
