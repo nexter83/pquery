@@ -1,0 +1,34 @@
+( date_from as text, site_id as text, customer_id as text, tag_id as text, login as text, password as text ) => 
+let
+   
+    session_key = getSession_key(login,password),
+
+    date_from = "2017-08-01",
+    date_till = Date.ToText(Date.AddDays(DateTime.Date(DateTime.LocalNow()),-1),"yyyy-MM-dd"),
+
+    getCall = Json.Document(
+                    Web.Contents(
+                        "http://api.comagic.ru/api/v1/",
+                        [
+                            RelativePath="call/",
+                            Query=
+                                [
+                                    session_key=session_key,
+                                    date_from=date_from,
+                                    date_till=date_till,
+                                    site_id=site_id,
+                                    customer_id=customer_id,
+                                    tag_id=tag_id
+                                   ]
+                        ]
+                                )
+                            ),
+
+
+
+    data1 = getCall[data],
+
+    #"Converted to Table1" = Table.FromList(data1, Splitter.SplitByNothing(), null, null, ExtraValues.Error)
+       
+in
+    #"Converted to Table1"
