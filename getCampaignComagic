@@ -1,0 +1,29 @@
+( customer_id as text, site_id as text, login as text, password as text ) => 
+let
+   
+    
+    session_key = getSession_key(login,password),
+
+    getCampaign = Json.Document(
+                    Web.Contents(
+                        "http://api.comagic.ru/api/v1/",
+                        [
+                            RelativePath="ac/",
+                            Query=
+                                [
+                                    session_key=session_key,
+                                    customer_id=customer_id,
+									site_id=site_id
+                                    ]
+                        ]
+                                )
+                            ),
+
+
+
+   data1 = getCampaign[data],
+    #"Converted to Table1" = Table.FromList(data1, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table1", "Column1", {"id", "name"}, {"id", "name"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded Column1",{{"name", "campaignComagicName"}})
+in
+    #"Renamed Columns"
